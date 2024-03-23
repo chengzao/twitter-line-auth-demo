@@ -14,17 +14,8 @@ GET {{host}}/oauth/authenticate
 
 ### /oauth/access_token
 GET {{host}}/oauth/access_token
-    ?oauth_token=8rGIdgAAAAABsz_iAAABjmwkmEE
-    &oauth_verifier=v9z7wCfu2ZE7BFGwPmfVD2sJZwCzL2PI
-
-
-
-### /account/verify_credentials
-GET {{host}}/account/verify_credentials
-    ?token=
-    &token_secret=
-
-
+    ?oauth_token=
+    &oauth_verifier=
 
 
 ### /authentication/x-auth-token
@@ -34,5 +25,5 @@ GET {{host}}/authentication/x-auth-token
 
 ### /authentication/through-verify-get-x-user
 GET {{host}}/authentication/through-verify-get-x-user
-    ?oauth_token=5a9vTQAAAAABsz_iAAABjmxTAxU
-    &oauth_verifier=C1CRn86RwImNag8JP4ZGHt1XgKwpJo0m
+    ?oauth_token=
+    &oauth_verifier=
