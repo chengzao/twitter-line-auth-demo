@@ -1,7 +1,13 @@
 ## Getting Started
 
+- auth
+
 ```bash
-npm run dev
-# or
 yarn dev
+```
+
+- server
+
+```bash
+yarn server
 ```
