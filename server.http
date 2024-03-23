@@ -1,0 +1,24 @@
+@host = http://127.0.0.1:3004
+
+
+### /oauth/request_token
+GET {{host}}/oauth/request_token
+
+
+### /oauth/authenticate
+GET {{host}}/oauth/authenticate
+    ?oauth_token=
+
+
+
+### /oauth/access_token
+GET {{host}}/oauth/access_token
+    ?oauth_token=
+    &oauth_verifier=
+
+
+
+### /account/verify_credentials
+GET {{host}}/account/verify_credentials
+    ?token=
+    &token_secret=

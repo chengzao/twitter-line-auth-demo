@@ -1,0 +1,12 @@
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fadeIn {
+  animation-name: fade;
+  animation-duration: 1s; /* 动画持续时间 */
+  animation-fill-mode: forwards; /* 动画结束后保持最后的样式状态 */
+  animation-iteration-count: infinite; /* 动画播放次数 */
+  animation-delay: 0.5s; /* 动画延迟开始的时间 */
+}
