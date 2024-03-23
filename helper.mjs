@@ -1,6 +1,6 @@
 import CryptoJS from 'crypto-js'
 
-export function generateOAuthHeader({url, method, consumerKey, consumerSecret, token, tokenSecret}) {
+export function generateOAuthHeader({url, method, consumerKey, consumerSecret, token, tokenSecret, additionalParams}) {
   // 生成随机的字符串作为oauth_nonce，并获取当前时间戳
   const oauth_nonce = CryptoJS.lib.WordArray.random(32).toString(CryptoJS.enc.Hex);
   const oauth_timestamp = Math.floor(Date.now() / 1000).toString();
@@ -21,11 +21,14 @@ export function generateOAuthHeader({url, method, consumerKey, consumerSecret, t
     .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(oauthParameters[key])}`)
     .join('&');
 
+  // 确保包含了所有必要的查询参数在签名中
+  const baseStringAdditionalParams = additionalParams ? '&' + new URLSearchParams(additionalParams).toString() : '';  
+
   // 构造签名的基础字符串
   const signatureBaseString = [
     method.toUpperCase(),
-    encodeURIComponent(url),
-    encodeURIComponent(encodedParams)
+    encodeURIComponent(url.split('?')[0]), // 只取URL主体部分，去除查询参数
+    encodeURIComponent(encodedParams + baseStringAdditionalParams) // 参数编码后，包含额外的查询参数
   ].join('&');
 
   // 生成签名的密钥

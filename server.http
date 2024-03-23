@@ -5,6 +5,7 @@
 GET {{host}}/oauth/request_token
 
 
+
 ### /oauth/authenticate
 GET {{host}}/oauth/authenticate
     ?oauth_token=
@@ -13,8 +14,8 @@ GET {{host}}/oauth/authenticate
 
 ### /oauth/access_token
 GET {{host}}/oauth/access_token
-    ?oauth_token=
-    &oauth_verifier=
+    ?oauth_token=8rGIdgAAAAABsz_iAAABjmwkmEE
+    &oauth_verifier=v9z7wCfu2ZE7BFGwPmfVD2sJZwCzL2PI
 
 
 
@@ -22,3 +23,16 @@ GET {{host}}/oauth/access_token
 GET {{host}}/account/verify_credentials
     ?token=
     &token_secret=
+
+
+
+
+### /authentication/x-auth-token
+GET {{host}}/authentication/x-auth-token
+
+
+
+### /authentication/through-verify-get-x-user
+GET {{host}}/authentication/through-verify-get-x-user
+    ?oauth_token=7JIb3wAAAAABsz_iAAABjmw7yOY
+    &oauth_verifier=RZmq3eWrOpCegJ4bmFJ8DdZjw0gIY69i

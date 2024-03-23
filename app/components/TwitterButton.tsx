@@ -85,17 +85,15 @@ export const TwitterLogin = (props: TwitterLoginType) => {
       if(loading) return
       setLoading(true)
       const requestData = await fetchTwitterAuthUrl({redirect_uri});
-      const authData = requestData?.data || {}
-      localStorage.setItem(TWITTER_AUTH_OWNER_KEY, JSON.stringify(authData));
       fetchingAuthUrl && fetchingAuthUrl(false)
       setLoading(false)
-      if(!authData.redirect_url) {
+      if(!requestData.redirect_url) {
         handleCloseWindow(newWin)
         return
       }
 
       if (newWin) {
-        newWin.location.href = authData.redirect_url
+        newWin.location.href = requestData.redirect_url
         sessionStorage.removeItem(TWITTER_AUTH_KEY);
         observeWindow({ popup: newWin, onClose: closingPopup });
       }

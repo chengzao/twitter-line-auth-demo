@@ -7,7 +7,6 @@ import {
   AUTH_STATUS,
   isServer,
   TWITTER_AUTH_EVENT,
-  TWITTER_AUTH_OWNER_KEY,
 } from "./helper";
 import styles from "./index.module.css";
 
@@ -43,18 +42,16 @@ const TwitterAuthCallback = (props: React.PropsWithChildren) => {
 
   const fetchData = async (query: any) => {
     try {
-      const { oauth_verifier } = query;
-      const ownerKey = localStorage.getItem(TWITTER_AUTH_OWNER_KEY);
-      const { owner_key, owner_secret } = JSON.parse(ownerKey || "{}");
-      const userInfo = await fetchTwitterUserInfo({ owner_key,owner_secret, oauth_verifier });
+      const { oauth_verifier,oauth_token  } = query;
+      const userInfo = await fetchTwitterUserInfo({ oauth_token, oauth_verifier });
       const sendData = {
         message: "twitter authorized succeed",
         type: AUTH_STATUS.SUCCESS,
-        data: userInfo?.data,
+        data: userInfo?.result,
       }
       sendMessage(sendData)
     } catch (error) {
-      localStorage.removeItem(TWITTER_AUTH_OWNER_KEY)
+      console.log('error', error)
       const sendData = {
         message: "twitter authorized failed",
         type: AUTH_STATUS.ERROR,

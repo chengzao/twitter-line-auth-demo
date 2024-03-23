@@ -12,16 +12,14 @@ export const fetchTwitterAuthUrl = async ({redirect_uri}: { redirect_uri: string
 
 // fetch twitter user info
 export const fetchTwitterUserInfo = async ({
-  owner_key,
-  owner_secret,
+  oauth_token,
   oauth_verifier,
 }: {
-  owner_key: string;
-  owner_secret: string;
+  oauth_token: string;
   oauth_verifier: string;
 }) => {
 
-  const url = `${apiBaseUrl}/authentication/through-verify-get-x-user?verify=${oauth_verifier}&owner_key=${owner_key}&owner_secret=${owner_secret}`
+  const url = `${apiBaseUrl}/authentication/through-verify-get-x-user?oauth_verifier=${oauth_verifier}&oauth_token=${oauth_token}`
   return fetch(url).then((res) => res.json());
 };
 
