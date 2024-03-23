@@ -2,8 +2,9 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import axios from "axios";
+import CryptoJS from 'crypto-js'
 
-import { generateOAuthHeader,makeSignature,parseOAuthTokens } from './helper.mjs'
+import { makeSignature,parseOAuthTokens,getOAuthHeader } from './helper.mjs'
  
 dotenv.config();
 
@@ -66,37 +67,6 @@ app.get('/oauth/access_token', async function (req, res) {
   }
 })
 
-app.get('/account/verify_credentials', async function (req, res) {
-  try {
-    const { token, token_secret } = req.query;
-    console.log('token', token);
-    console.log('token_secret', token_secret);
-
-    const url = 'https://api.twitter.com/1.1/account/verify_credentials.json'
-    const oauth_signature = generateOAuthHeader({
-      url: url,
-      method: 'GET',
-      consumerKey: consumer_key,
-      consumerSecret: consumer_secret,
-      token: token,
-      tokenSecret: token_secret
-    })
-
-    const result = await axios({
-      method: "GET",
-      url: url,
-      headers: {
-        Authorization: `${oauth_signature}`,
-      }
-    })
-
-    res.json({ result: result.data });
-  } catch (error) {
-    console.log('error', error)
-    res.json({ error });
-  }
-})
-
 app.get('/authentication/x-auth-token', async function (req, res) {
   try {
     const oauth_signature = makeSignature({
@@ -126,7 +96,6 @@ app.get('/authentication/x-auth-token', async function (req, res) {
   }  
 })
 
-
 app.get('/authentication/through-verify-get-x-user', async function (req, res) {
   try {
     const { oauth_token, oauth_verifier } = req.query;
@@ -142,30 +111,41 @@ app.get('/authentication/through-verify-get-x-user', async function (req, res) {
 
     console.log('parseData :: ', parseData)
 
-    // URL必须改为排除查询参数来生成OAuth签名
-    const verify_credentials_url_base = 'https://api.twitter.com/1.1/account/verify_credentials.json'
-    const oauth_signature = generateOAuthHeader({
-      url: verify_credentials_url_base, // 注意：在签名函数中不包含查询参数
-      method: 'GET',
-      consumerKey: consumer_key,
-      consumerSecret: consumer_secret,
-      token: parseData?.oauth_token,
-      tokenSecret: parseData?.oauth_token_secret
-    })
-
-    // 现在的URL需要包括查询参数
-    const verify_credentials_url_with_params = verify_credentials_url_base;
-    const result = await axios({
-      method: "GET",
-      url: verify_credentials_url_with_params,
+    const accessToken = parseData?.oauth_token;
+    const accessTokenSecret = parseData?.oauth_token_secret;
+    const oauth_nonce = CryptoJS.lib.WordArray.random(32).toString(CryptoJS.enc.Hex);
+    
+    // Twitter API endpoint
+    const endpoint = "https://api.twitter.com/1.1/account/verify_credentials.json";
+    const method = 'GET';
+    const endpointWithParams = `${endpoint}?include_email=true`;
+    
+    // 获取OAuth授权头部
+    const oauthHeader = getOAuthHeader({
+      url: endpoint,
+      method,
+      consumer_key,
+      consumer_secret,
+      accessToken,
+      accessTokenSecret,
+      oauth_nonce
+    });
+    
+    axios.get(endpointWithParams, {
       headers: {
-        Authorization: `${oauth_signature}`,
+        "Authorization": oauthHeader,
+        "Content-Type": "application/x-www-form-urlencoded"
       }
     })
+    .then(response => {
+      res.status(200).json({ result: response.data });
+    })
+    .catch(error => {
+      console.error('Authentication request failed', error);
+      res.status(500).json({ error });
+    });
 
-    res.status(200).json({ result: result.data });
   } catch (error) {
-    // console.log('error', error)
     res.status(500).json({ error });
   }
 })

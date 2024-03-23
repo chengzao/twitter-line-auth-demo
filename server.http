@@ -34,5 +34,5 @@ GET {{host}}/authentication/x-auth-token
 
 ### /authentication/through-verify-get-x-user
 GET {{host}}/authentication/through-verify-get-x-user
-    ?oauth_token=7JIb3wAAAAABsz_iAAABjmw7yOY
-    &oauth_verifier=RZmq3eWrOpCegJ4bmFJ8DdZjw0gIY69i
+    ?oauth_token=5a9vTQAAAAABsz_iAAABjmxTAxU
+    &oauth_verifier=C1CRn86RwImNag8JP4ZGHt1XgKwpJo0m
