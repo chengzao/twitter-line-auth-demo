@@ -7,6 +7,7 @@ import {
   AUTH_STATUS,
   isServer,
   TWITTER_AUTH_EVENT,
+  TWITTER_AUTH_KEY,
 } from "./helper";
 import styles from "./index.module.css";
 
@@ -27,7 +28,7 @@ const TwitterAuthCallback = (props: React.PropsWithChildren) => {
   }
 
   const sendMessage = (data: any) => {
-    sessionStorage.setItem(TWITTER_AUTH_EVENT, JSON.stringify(data));
+    sessionStorage.setItem(TWITTER_AUTH_KEY, JSON.stringify(data));
     channel.postMessage({
       message: {
         type: TWITTER_AUTH_EVENT,

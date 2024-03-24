@@ -15,10 +15,11 @@ app.use(cors());
 const consumer_key = process.env.TWITTER_AUTH_CONSUMER_KEY;
 const consumer_secret = process.env.TWITTER_AUTH_CONSUMER_SECRET;
 
-const callback_url = "http://localhost:3000/social-auth-callback/twitter";
+// const callback_url = "http://localhost:3000/social-auth-callback/twitter";
 
 app.get("/oauth/request_token", async function (req, res) {
   try {
+    const { callback_url } = req.query
     const oauth_signature = makeSignature({
       callback_url,
       consumer_key,
@@ -69,6 +70,7 @@ app.get('/oauth/access_token', async function (req, res) {
 
 app.get('/authentication/x-auth-token', async function (req, res) {
   try {
+    const { callback_url } = req.query
     const oauth_signature = makeSignature({
       callback_url,
       consumer_key,
@@ -138,6 +140,7 @@ app.get('/authentication/through-verify-get-x-user', async function (req, res) {
       }
     })
     .then(response => {
+      // console.log('Response data:', response.data);
       res.status(200).json({ result: response.data });
     })
     .catch(error => {

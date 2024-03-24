@@ -11,21 +11,20 @@ import {
   TWITTER_AUTH_EVENT,
   AUTH_STATUS,
   TWITTER_AUTH_KEY,
-  TWITTER_AUTH_OWNER_KEY
 } from "./helper";
 
 interface TwitterLoginType {
   authCallback: (event: any) => void;
   redirect_uri: string;
   children?: React.ReactNode;
-  fetchingAuthUrl?: (state: boolean) => void;
+  onFetchingAuthUrl?: (state: boolean) => void;
 }
 
 const channel = new BroadcastChannel(TWITTER_AUTH_EVENT);
 // import VConsoleDebug from './VConsoleDebug'
 
 export const TwitterLogin = (props: TwitterLoginType) => {
-  const { authCallback, redirect_uri, fetchingAuthUrl, children } = props
+  const { authCallback, redirect_uri, onFetchingAuthUrl, children } = props
 
   const [popup, setPopup] = useState<unknown>(null);
   const [messageApi, contextHolder] = message.useMessage();
@@ -78,30 +77,41 @@ export const TwitterLogin = (props: TwitterLoginType) => {
         closingPopup()
       }
     }
-    fetchingAuthUrl && fetchingAuthUrl(true)
-    const newWin = openWindow({ url:'', name: "Log in with Twitter" });
-    setPopup(newWin);
+    onFetchingAuthUrl && onFetchingAuthUrl(true)
+
+    let newWin = undefined
+    
+    if(!isMobile) {
+      newWin = openWindow({ url:'', name: "Log in with Twitter" });
+      setPopup(newWin);
+    }
+
     try {
       if(loading) return
       setLoading(true)
       const requestData = await fetchTwitterAuthUrl({redirect_uri});
-      fetchingAuthUrl && fetchingAuthUrl(false)
+      const twitter_auth_url = requestData.redirect_url
+      onFetchingAuthUrl && onFetchingAuthUrl(false)
       setLoading(false)
-      if(!requestData.redirect_url) {
-        handleCloseWindow(newWin)
+      if(!twitter_auth_url) {
+        !isMobile && handleCloseWindow(newWin)
         return
       }
 
+      if(isMobile) {
+        newWin = openWindow({ url: twitter_auth_url, name: "Log in with Twitter" });
+      }
+
       if (newWin) {
-        newWin.location.href = requestData.redirect_url
+        newWin.location.href = twitter_auth_url
         sessionStorage.removeItem(TWITTER_AUTH_KEY);
         observeWindow({ popup: newWin, onClose: closingPopup });
       }
     } catch (error) {
       console.log('error', error)
       setLoading(false)
-      handleCloseWindow(newWin)
-      fetchingAuthUrl && fetchingAuthUrl(false)
+      !isMobile && handleCloseWindow(newWin)
+      onFetchingAuthUrl && onFetchingAuthUrl(false)
     }
   };
 
@@ -134,7 +144,7 @@ export default () => {
     }
   };
 
-  const fetchingAuthUrl = (state: boolean) => {
+  const onFetchingAuthUrl = (state: boolean) => {
     console.log('status:: ', state)
   }
 
@@ -150,7 +160,7 @@ export default () => {
 
   return (
     <>
-      <TwitterLogin fetchingAuthUrl={fetchingAuthUrl} redirect_uri={redirect_uri} authCallback={authCallback} />
+      <TwitterLogin onFetchingAuthUrl={onFetchingAuthUrl} redirect_uri={redirect_uri} authCallback={authCallback} />
       <p>Twitter Login Status: {login ? `true` : "false"}</p>
       <p>Twitter User Email: {user?.email || '-'}</p>
       <p>Twitter User Id: {user?.id_str || '-'}</p>
