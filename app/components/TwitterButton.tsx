@@ -20,7 +20,7 @@ interface TwitterLoginType {
   onFetchingAuthUrl?: (state: boolean) => void;
 }
 
-const channel = new BroadcastChannel(TWITTER_AUTH_EVENT);
+const twitterChannel = new BroadcastChannel(TWITTER_AUTH_EVENT);
 // import VConsoleDebug from './VConsoleDebug'
 
 export const TwitterLogin = (props: TwitterLoginType) => {
@@ -37,7 +37,7 @@ export const TwitterLogin = (props: TwitterLoginType) => {
   };
 
   useEffect(() => {
-    channel.onmessage = (event) => {
+    twitterChannel.onmessage = (event) => {
       if(event.targetOrigin === location.origin) {
         const { type, data } = event.message;
         if (type === TWITTER_AUTH_EVENT) {
@@ -135,7 +135,7 @@ export default () => {
   const [user, setUser] = useState<any>({});
 
   const authCallback = (event: any) => {
-    console.log('message:: ', event)
+    console.log('twitter message:: ', event)
     const { type, data } = event;
     if (type === AUTH_STATUS.SUCCESS) {
       setLogin(true);
@@ -145,12 +145,12 @@ export default () => {
   };
 
   const onFetchingAuthUrl = (state: boolean) => {
-    console.log('status:: ', state)
+    console.log('twitter fetching auth url status:: ', state)
   }
 
   useEffect(() => {
     const userData = sessionStorage.getItem(TWITTER_AUTH_KEY);
-    console.log('userData', userData)
+    console.log('twitter userData:: ', userData)
     if (userData) {
       const {data, type} = JSON.parse(userData);
       setLogin(type === AUTH_STATUS.SUCCESS);

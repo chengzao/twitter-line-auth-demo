@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import * as jose from "jose";
 import url from "url";
 import { BroadcastChannel } from 'broadcast-channel';
+import { isMobile } from "react-device-detect";
 
 import { fetchLineUserInfo } from "./service";
 import {
@@ -15,9 +16,8 @@ import {
 } from "./helper";
 
 import styles from "./index.module.css";
-import { isMobile } from "react-device-detect";
 
-const channel = new BroadcastChannel(LINE_AUTH_EVENT);
+const lineChannel = new BroadcastChannel(LINE_AUTH_EVENT);
 
 const LineAuthCallback = (props: React.PropsWithChildren) => {
   const { children } = props;
@@ -27,13 +27,15 @@ const LineAuthCallback = (props: React.PropsWithChildren) => {
   const onCloseWin = () => {
     window.close();
     if(isMobile) {
-      window.location.href = window.location.origin + '/get-started'
+      setTimeout(() => {
+        window.location.href = window.location.origin + '/get-started'
+      }, 1000)
     }
   }
 
   const sendMessage = (data: any) => {
     sessionStorage.setItem(LINE_AUTH_KEY, JSON.stringify(data));
-    channel.postMessage({
+    lineChannel.postMessage({
       message: {
         type: LINE_AUTH_EVENT,
         data: data,

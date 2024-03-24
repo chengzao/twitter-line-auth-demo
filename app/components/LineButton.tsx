@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import querystring from "query-string";
 import { BroadcastChannel } from 'broadcast-channel';
+import { isMobile } from "react-device-detect";
 
 import {
   openWindow,
@@ -13,8 +14,6 @@ import {
   LINE_AUTH_KEY,
 } from "./helper";
 
-const maxAge = 120;
-
 interface LineLoginType {
   children?: React.ReactNode;
   clientID: string;
@@ -25,10 +24,10 @@ interface LineLoginType {
   authCallback: (event: any) => void;
 }
 
-const channel = new BroadcastChannel(LINE_AUTH_EVENT);
+const maxAge = 120;
+const lineChannel = new BroadcastChannel(LINE_AUTH_EVENT);
 
-import VConsoleDebug from './VConsoleDebug'
-import { isMobile } from "react-device-detect";
+// import VConsoleDebug from './VConsoleDebug'
 
 export const LineLogin = (props: LineLoginType) => {
   const {
@@ -50,7 +49,7 @@ export const LineLogin = (props: LineLoginType) => {
   };
 
   useEffect(() => {
-    channel.onmessage = (event) => {
+    lineChannel.onmessage = (event) => {
       if(event.targetOrigin === location.origin) {
         const { type, data } = event.message;
         if (type === LINE_AUTH_EVENT) {
@@ -118,7 +117,7 @@ export default () => {
   const redirect_uri = window.location.origin+"/social-auth-callback/line";
 
   const authCallback = (event: any) => {
-    console.log('message:: ', event)
+    console.log('line message:: ', event)
     const { type, data } = event;
     if (type === AUTH_STATUS.SUCCESS) {
       setLogin(true);
@@ -129,7 +128,7 @@ export default () => {
 
   useEffect(() => {
     const userData = sessionStorage.getItem(LINE_AUTH_KEY);
-    console.log('userData', userData)
+    console.log('line userData:: ', userData)
     if (userData) {
       const {data, type} = JSON.parse(userData);
       setLogin(type === AUTH_STATUS.SUCCESS);
@@ -147,7 +146,7 @@ export default () => {
         redirectURI={redirect_uri}
         authCallback={authCallback}
       />
-      <VConsoleDebug />
+      {/* <VConsoleDebug /> */}
       <p>Line Login Status: {login ? `true` : "false"}</p>
       <p>Line User Email: {user?.email || '-'}</p>
       <p>Line User Id: {user?.sub || '-'}</p>

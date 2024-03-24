@@ -1,6 +1,8 @@
 "use client";
 import React, { useEffect } from "react";
 import url from "url";
+import { BroadcastChannel } from 'broadcast-channel';
+import { isMobile } from "react-device-detect";
 
 import { fetchTwitterUserInfo } from "./service";
 import {
@@ -11,10 +13,7 @@ import {
 } from "./helper";
 import styles from "./index.module.css";
 
-import { BroadcastChannel } from 'broadcast-channel';
-import { isMobile } from "react-device-detect";
-
-const channel = new BroadcastChannel(TWITTER_AUTH_EVENT);
+const twitterChannel = new BroadcastChannel(TWITTER_AUTH_EVENT);
 
 
 const TwitterAuthCallback = (props: React.PropsWithChildren) => {
@@ -23,13 +22,15 @@ const TwitterAuthCallback = (props: React.PropsWithChildren) => {
   const onCloseWin = () => {
     window.close();
     if(isMobile) {
-      window.location.href = window.location.origin + '/get-started'
+      setTimeout(() => {
+        window.location.href = window.location.origin + '/get-started'
+      }, 1000)
     }
   }
 
   const sendMessage = (data: any) => {
     sessionStorage.setItem(TWITTER_AUTH_KEY, JSON.stringify(data));
-    channel.postMessage({
+    twitterChannel.postMessage({
       message: {
         type: TWITTER_AUTH_EVENT,
         data: data,
