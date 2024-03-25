@@ -33,6 +33,36 @@ interface OpenWindow {
 
 export const isServer = typeof window === 'undefined';
 
+// setItem
+export const setLocalItem = (key: string, value: any) => {
+  if(isServer) throw new Error('setLocalItem is not support in server');
+  if(typeof value === 'object'){
+    localStorage.setItem(key, JSON.stringify(value));
+  } else {
+    localStorage.setItem(key, value);
+  }
+}
+
+// getItem
+export const getLocalItem = (key: string) => {
+  if(isServer) throw new Error('getLocalItem is not support in server');
+  const value = localStorage.getItem(key);
+  if(!value){
+    return null;
+  }
+  try {
+    return JSON.parse(value);
+  } catch (error) {
+    return value
+  }
+}
+
+// removeItem
+export const removeLocalItem = (key: string) => {
+  if(isServer) throw new Error('removeLocalItem is not support in server');
+  localStorage.removeItem(key);
+}
+
 export const openWindow = ({ url, name, width=400, height=500 }: OpenWindow) => {
   const top = (window.innerHeight - 400) / 2 + window.screenY;
   const left = (window.innerWidth - 400) / 2 + window.screenX;

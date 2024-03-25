@@ -11,6 +11,9 @@ import {
   TWITTER_AUTH_EVENT,
   AUTH_STATUS,
   TWITTER_AUTH_KEY,
+  setLocalItem,
+  removeLocalItem,
+  getLocalItem
 } from "./helper";
 
 interface TwitterLoginType {
@@ -104,7 +107,7 @@ export const TwitterLogin = (props: TwitterLoginType) => {
 
       if (newWin) {
         newWin.location.href = twitter_auth_url
-        sessionStorage.removeItem(TWITTER_AUTH_KEY);
+        removeLocalItem(TWITTER_AUTH_KEY);
         observeWindow({ popup: newWin, onClose: closingPopup });
       }
     } catch (error) {
@@ -137,11 +140,8 @@ export default () => {
   const authCallback = (event: any) => {
     console.log('twitter message:: ', event)
     const { type, data } = event;
-    if (type === AUTH_STATUS.SUCCESS) {
-      setLogin(true);
-      sessionStorage.setItem(TWITTER_AUTH_KEY, JSON.stringify(event));
-      setUser(data)
-    }
+    setLogin(type === AUTH_STATUS.SUCCESS);
+    setUser(data);
   };
 
   const onFetchingAuthUrl = (state: boolean) => {
@@ -149,12 +149,12 @@ export default () => {
   }
 
   useEffect(() => {
-    const userData = sessionStorage.getItem(TWITTER_AUTH_KEY);
+    const userData = getLocalItem(TWITTER_AUTH_KEY);
     console.log('twitter userData:: ', userData)
     if (userData) {
-      const {data, type} = JSON.parse(userData);
+      const {data, type} = userData;
       setLogin(type === AUTH_STATUS.SUCCESS);
-      type === AUTH_STATUS.SUCCESS && setUser(data);
+      setUser(data);
     }
   }, [])
 

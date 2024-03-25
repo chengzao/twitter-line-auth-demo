@@ -13,6 +13,7 @@ import {
   LINE_AUTH_CLIENT_SECRET,
   isServer,
   LINE_AUTH_KEY,
+  setLocalItem,
 } from "./helper";
 
 import styles from "./index.module.css";
@@ -34,7 +35,7 @@ const LineAuthCallback = (props: React.PropsWithChildren) => {
   }
 
   const sendMessage = (data: any) => {
-    sessionStorage.setItem(LINE_AUTH_KEY, JSON.stringify(data));
+    setLocalItem(LINE_AUTH_KEY, JSON.stringify(data));
     lineChannel.postMessage({
       message: {
         type: LINE_AUTH_EVENT,

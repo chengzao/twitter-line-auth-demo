@@ -12,6 +12,8 @@ import {
   LINE_AUTH_CLIENT_ID,
   AUTH_STATUS,
   LINE_AUTH_KEY,
+  removeLocalItem,
+  getLocalItem,
 } from "./helper";
 
 interface LineLoginType {
@@ -69,7 +71,7 @@ export const LineLogin = (props: LineLoginType) => {
 
     if (newWin) {
       setPopup(newWin);
-      sessionStorage.removeItem(LINE_AUTH_KEY);
+      removeLocalItem(LINE_AUTH_KEY);
       observeWindow({ popup: newWin, onClose: closingPopup });
     }
   };
@@ -119,20 +121,17 @@ export default () => {
   const authCallback = (event: any) => {
     console.log('line message:: ', event)
     const { type, data } = event;
-    if (type === AUTH_STATUS.SUCCESS) {
-      setLogin(true);
-      sessionStorage.setItem(LINE_AUTH_KEY, JSON.stringify(event));
-      setUser(data)
-    }
+    setLogin(type === AUTH_STATUS.SUCCESS);
+    setUser(data);
   };
 
   useEffect(() => {
-    const userData = sessionStorage.getItem(LINE_AUTH_KEY);
+    const userData = getLocalItem(LINE_AUTH_KEY);
     console.log('line userData:: ', userData)
     if (userData) {
-      const {data, type} = JSON.parse(userData);
+      const {data, type} = userData;
       setLogin(type === AUTH_STATUS.SUCCESS);
-      type === AUTH_STATUS.SUCCESS && setUser(data);
+      setUser(data)
     }
   }, [])
 

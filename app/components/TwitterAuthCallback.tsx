@@ -10,6 +10,7 @@ import {
   isServer,
   TWITTER_AUTH_EVENT,
   TWITTER_AUTH_KEY,
+  setLocalItem,
 } from "./helper";
 import styles from "./index.module.css";
 
@@ -29,7 +30,7 @@ const TwitterAuthCallback = (props: React.PropsWithChildren) => {
   }
 
   const sendMessage = (data: any) => {
-    sessionStorage.setItem(TWITTER_AUTH_KEY, JSON.stringify(data));
+    setLocalItem(TWITTER_AUTH_KEY, JSON.stringify(data));
     twitterChannel.postMessage({
       message: {
         type: TWITTER_AUTH_EVENT,
@@ -46,6 +47,9 @@ const TwitterAuthCallback = (props: React.PropsWithChildren) => {
     try {
       const { oauth_verifier,oauth_token  } = query;
       const userInfo = await fetchTwitterUserInfo({ oauth_token, oauth_verifier });
+      if(!userInfo?.result) {
+        throw new Error("fetch data error");
+      }
       const sendData = {
         message: "twitter authorized succeed",
         type: AUTH_STATUS.SUCCESS,
