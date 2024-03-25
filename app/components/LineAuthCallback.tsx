@@ -20,8 +20,13 @@ import styles from "./index.module.css";
 
 const lineChannel = new BroadcastChannel(LINE_AUTH_EVENT);
 
-const LineAuthCallback = (props: React.PropsWithChildren) => {
-  const { children } = props;
+interface LineAuthCallbackProps {
+  children?: React.ReactNode;
+  fallbackUrl: string;
+}
+
+const LineAuthCallback = (props: LineAuthCallbackProps) => {
+  const { children,fallbackUrl } = props;
   const clientID = LINE_AUTH_CLIENT_ID;
   const clientSecret = LINE_AUTH_CLIENT_SECRET;
 
@@ -29,7 +34,7 @@ const LineAuthCallback = (props: React.PropsWithChildren) => {
     window.close();
     if(isMobile) {
       setTimeout(() => {
-        window.location.href = window.location.origin + '/get-started'
+        window.location.href = fallbackUrl
       }, 1000)
     }
   }

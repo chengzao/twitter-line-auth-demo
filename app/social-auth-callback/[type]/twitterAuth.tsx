@@ -11,9 +11,11 @@ const TwitterAuth = () => {
       document.title = 'Log in With Twitter';
     }
   }, [])
+
+  const fallbackUrl = window.location.origin + '/get-started'
   
   return (
-    <TwitterAuthCallback>
+    <TwitterAuthCallback fallbackUrl={fallbackUrl}>
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
         <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
           Redirect<span className={styles.fadeIn}>...</span>

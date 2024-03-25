@@ -16,15 +16,19 @@ import styles from "./index.module.css";
 
 const twitterChannel = new BroadcastChannel(TWITTER_AUTH_EVENT);
 
+interface TwitterAuthCallbackProps {
+  children?: React.ReactNode;
+  fallbackUrl: string;
+}
 
-const TwitterAuthCallback = (props: React.PropsWithChildren) => {
-  const { children } = props;
+const TwitterAuthCallback = (props: TwitterAuthCallbackProps) => {
+  const { children,fallbackUrl } = props;
 
   const onCloseWin = () => {
     window.close();
     if(isMobile) {
       setTimeout(() => {
-        window.location.href = window.location.origin + '/get-started'
+        window.location.href = fallbackUrl
       }, 1000)
     }
   }
