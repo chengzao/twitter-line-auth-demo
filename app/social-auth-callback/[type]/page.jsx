@@ -1,8 +1,8 @@
 import React,{Suspense} from "react";
 import { redirect } from 'next/navigation'
 
-import Twitter from './twitterAuth'
-import Line from './lineAuth'
+const Twitter = dynamic(() => import('./twitterAuth'), { ssr: false })
+const Line = dynamic(() => import('./lineAuth'), { ssr: false })
 
 
 export default function GetStarted(props) {
